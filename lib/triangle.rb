@@ -1,5 +1,31 @@
+# class Triangle
+#   attr_accessor :a, :b, :c, :equilateral, :isosceles, :scalene
+  
+#   def initialize(a, b, c)
+#     @a = a
+#     @b = b
+#     @c = c
+#   end
+
+#   def kind 
+#     if a == b && a == c 
+#       :equilateral 
+#     elsif a == b || a == c || b == c 
+#       :isosceles 
+#     else 
+#       :scalene
+#     end
+#   end
+  
+#   class TriangeError < StandardError
+#     def message 
+#       "Triangle Error, try again"
+#     end
+#   end
+# end
+
 class Triangle
-  attr_accessor :a, :b, :c, :equilateral, :isosceles, :scalene
+  attr_reader :a, :b, :c
   
   def initialize(a, b, c)
     @a = a
@@ -7,20 +33,30 @@ class Triangle
     @c = c
   end
 
-  def kind 
-    if a == b && a == c 
-      @equilateral = true 
-    elsif a == b || a == c || b == c 
-      @isosceles = true 
-      elsif a != b && a != c && b != c
-      @scalene = true
-      else 
+  def kind
+    validate_triangle
+    if a == b && b == c
+      :equilateral
+    elsif a == b || b == c || a == c
+      :isosceles
+    else
+      :scalene
     end
   end
-  
-  class TriangeError < StandardError
-    def message 
-      "Triangle Error, try again"
-    end
+
+  def sides_greater_than_zero?
+    [a, b, c].all?(&:positive?)
   end
+
+  def valid_triangle_inequality?
+    a + b > c && a + c > b && b + c > a
+  end
+
+  def validate_triangle
+    raise TriangleError unless sides_greater_than_zero? && valid_triangle_inequality?
+  end
+
+  class TriangleError < StandardError
+  end
+
 end
